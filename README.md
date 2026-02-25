@@ -2,7 +2,7 @@
 
 **Graph Neural Network Fraud Detection on Financial Transaction Networks**
 
-Detects illicit transactions in Bitcoin/financial networks using GATv2Conv graph attention networks with class-imbalance-aware training.
+Detects illicit transactions in Bitcoin/financial networks using GATv2Conv graph attention networks with class-imbalance-aware training. Inspired by graph attention networks build for genomics.
 
 ---
 
