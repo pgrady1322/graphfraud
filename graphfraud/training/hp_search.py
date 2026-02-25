@@ -1,11 +1,14 @@
-# ═══════════════════════════════════════════════════════════════════════
-# GraphFraud — Optuna Hyperparameter Search
-# ═══════════════════════════════════════════════════════════════════════
 """
-Optuna-based HP search for both GNN and XGBoost models.
+GraphFraud v0.1.0
+
+hp_search.py — Optuna hyperparameter search for GNN and XGBoost models.
 
 Mirrors the Optuna pattern from strandweaver's ErrorSmith training
 and immunoclassifier's benchmark pipeline.
+
+Author: Patrick Grady
+Anthropic Claude Opus 4.6 used for code formatting and cleanup assistance.
+License: MIT License - See LICENSE
 """
 
 import logging
@@ -174,3 +177,6 @@ def run_hp_search(
     logger.info(f"Best params: {study.best_params}")
 
     return study.best_params
+
+# GraphFraud v0.1.0
+# Any usage is subject to this software's license.

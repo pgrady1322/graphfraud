@@ -1,48 +1,17 @@
 # ═══════════════════════════════════════════════════════════════════════
-# GraphFraud — .gitignore
+# GraphFraud — Logistic Regression Baseline Configuration
 # ═══════════════════════════════════════════════════════════════════════
 
-# Data (download via CLI)
-data/*
-!data/.gitkeep
+model:
+  type: logistic_regression
+  params:
+    C: 1.0
+    max_iter: 1000
+    resample: true
+    max_majority: 30000
 
-# Trained models
-trained_models/*
-!trained_models/.gitkeep
-*.pkl
-*.pt
+data:
+  data_dir: data/
 
-# Results
-results/*
-!results/.gitkeep
-
-# Python
-__pycache__/
-*.py[cod]
-*.egg-info/
-dist/
-build/
-*.egg
-
-# Environments
-.env
-.venv
-env/
-venv/
-
-# IDE
-.idea/
-.vscode/
-*.swp
-*.swo
-*~
-
-# OS
-.DS_Store
-Thumbs.db
-
-# Jupyter
-.ipynb_checkpoints/
-
-# MLOps
-mlruns/
+output:
+  dir: trained_models/

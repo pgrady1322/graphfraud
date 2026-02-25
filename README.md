@@ -53,6 +53,10 @@ graphfraud train --config configs/gatv2.yaml
 # Train XGBoost baseline
 graphfraud train --config configs/xgboost_baseline.yaml
 
+# Train sklearn baselines
+graphfraud train --config configs/logistic_regression.yaml
+graphfraud train --config configs/random_forest.yaml
+
 # Evaluate
 graphfraud evaluate --model trained_models/gatv2_best.pt --data data/
 
@@ -64,12 +68,17 @@ graphfraud explain --model trained_models/gatv2_best.pt --node-id 12345
 
 ```
 graphfraud/
+├── .github/
+│   └── workflows/
+│       └── ci.yml              # GitHub Actions (lint + core tests, GNN tests)
 ├── pyproject.toml
 ├── README.md
 ├── configs/
 │   ├── gatv2.yaml              # GATv2Conv config
 │   ├── graphsage.yaml          # GraphSAGE config
-│   └── xgboost_baseline.yaml   # XGBoost (no graph) baseline
+│   ├── xgboost_baseline.yaml   # XGBoost (no graph) baseline
+│   ├── logistic_regression.yaml  # Logistic Regression baseline
+│   └── random_forest.yaml      # Random Forest baseline
 ├── graphfraud/
 │   ├── __init__.py
 │   ├── cli.py                  # Click CLI
@@ -82,21 +91,23 @@ graphfraud/
 │   │   ├── gatv2.py            # GATv2Conv classifier
 │   │   ├── graphsage.py        # GraphSAGE classifier
 │   │   ├── gcn.py              # GCN baseline
-│   │   └── xgboost_baseline.py # Non-graph XGBoost baseline
+│   │   ├── xgboost_baseline.py # Non-graph XGBoost baseline
+│   │   └── sklearn_baselines.py  # Logistic Regression + Random Forest
 │   ├── training/
 │   │   ├── __init__.py
-│   │   ├── trainer.py          # Training loop (GNN)
+│   │   ├── trainer.py          # Training loop (GNN + sklearn routing)
 │   │   ├── hp_search.py        # Optuna HP optimization
 │   │   └── evaluation.py       # Metrics, confusion matrix, reports
 │   └── explain/
 │       ├── __init__.py
 │       └── gnn_explainer.py    # GNNExplainer wrapper
 ├── notebooks/
-│   └── 01_eda_and_baselines.ipynb
+│   └── 01_eda_and_baselines.ipynb  # EDA + non-graph baseline benchmarks
 ├── tests/
 │   ├── test_dataset.py
 │   ├── test_models.py
-│   └── test_resampling.py
+│   ├── test_resampling.py
+│   └── test_sklearn_baselines.py
 ├── trained_models/             # .pt / .pkl artifacts (gitignored)
 ├── data/                       # Raw data (gitignored)
 └── results/                    # Evaluation outputs (gitignored)
@@ -123,14 +134,19 @@ Input (166 features/node)
 - **Focal loss:** Down-weight easy examples, focus on hard-to-classify transactions
 - **Temporal train/val/test split:** Timesteps 1-34 train, 35-42 val, 43-49 test (no data leakage)
 
+### Feature Standardization
+
+All 166 features are standardized (`StandardScaler`, fit on training nodes only) before training to ensure features of different scales are treated equally by both GNNs and linear models.
+
 ### Baselines
-| Model | Features | Graph? |
-|-------|----------|--------|
-| Logistic Regression | 166 node features | No |
-| XGBoost | 166 node features | No |
-| GCN | 166 + graph topology | Yes |
-| GraphSAGE | 166 + sampled neighbors | Yes |
-| **GATv2Conv** | 166 + attention-weighted neighbors | Yes |
+| Model | Features | Graph? | Key Params |
+|-------|----------|--------|------------|
+| Logistic Regression | 166 (standardized) | No | L2, C=1.0, balanced weights |
+| Random Forest | 166 (standardized) | No | 300 trees, max_depth=12, balanced weights |
+| XGBoost | 166 node features | No | 500 rounds, max_depth=8, hybrid resampled |
+| GCN | 166 + graph topology | Yes | 3 layers, 64 hidden |
+| GraphSAGE | 166 + sampled neighbors | Yes | 3 layers, 64 hidden |
+| **GATv2Conv** | 166 + attention-weighted neighbors | Yes | 3 layers, 8 heads, 32 dim |
 
 ## Key Design Decisions
 

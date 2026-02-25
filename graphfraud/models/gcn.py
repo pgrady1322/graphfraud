@@ -1,11 +1,14 @@
-# ═══════════════════════════════════════════════════════════════════════
-# GraphFraud — GCN Baseline
-# ═══════════════════════════════════════════════════════════════════════
 """
-Graph Convolutional Network baseline for fraud classification.
+GraphFraud v0.1.0
+
+gcn.py — Graph Convolutional Network baseline classifier.
 
 Simplest GNN baseline — no attention, no sampling.
 Reference: Kipf & Welling "Semi-Supervised Classification with GCNs" (ICLR 2017)
+
+Author: Patrick Grady
+Anthropic Claude Opus 4.6 used for code formatting and cleanup assistance.
+License: MIT License - See LICENSE
 """
 
 import torch
@@ -52,3 +55,6 @@ class GCNFraudClassifier(nn.Module):
             x = F.dropout(x, p=self.dropout, training=self.training)
 
         return self.mlp(x)
+
+# GraphFraud v0.1.0
+# Any usage is subject to this software's license.

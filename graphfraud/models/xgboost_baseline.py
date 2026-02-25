@@ -1,14 +1,17 @@
-# ═══════════════════════════════════════════════════════════════════════
-# GraphFraud — XGBoost Baseline (No Graph Structure)
-# ═══════════════════════════════════════════════════════════════════════
 """
-XGBoost baseline classifier that uses only node features (ignores graph topology).
+GraphFraud v0.1.0
 
-This establishes a strong non-graph baseline. If the GNN can't beat this,
-the graph structure isn't providing useful signal — an important sanity check.
+xgboost_baseline.py — XGBoost baseline classifier (no graph structure).
 
-This mirrors the XGBoost training pattern from strandweaver's ErrorSmith
+Establishes a strong non-graph baseline. If the GNN can't beat this,
+the graph structure isn't providing useful signal.
+
+Mirrors the XGBoost training pattern from strandweaver's ErrorSmith
 and immunoclassifier pipelines.
+
+Author: Patrick Grady
+Anthropic Claude Opus 4.6 used for code formatting and cleanup assistance.
+License: MIT License - See LICENSE
 """
 
 import logging
@@ -108,3 +111,6 @@ def train_xgboost_baseline(
         logger.info(f"✓ Saved: {save_path}")
 
     return model, results
+
+# GraphFraud v0.1.0
+# Any usage is subject to this software's license.

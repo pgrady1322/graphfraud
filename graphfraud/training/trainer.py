@@ -1,12 +1,17 @@
-# ═══════════════════════════════════════════════════════════════════════
-# GraphFraud — GNN Training Loop
-# ═══════════════════════════════════════════════════════════════════════
 """
+GraphFraud v0.1.0
+
+trainer.py — GNN and baseline model training loop.
+
 Training loop for GNN fraud classifiers with:
 - Focal loss for class imbalance
 - Early stopping on validation F1
 - Temporal train/val/test split (no data leakage)
 - Semi-supervised: unlabeled nodes participate in message passing
+
+Author: Patrick Grady
+Anthropic Claude Opus 4.6 used for code formatting and cleanup assistance.
+License: MIT License - See LICENSE
 """
 
 import json
@@ -20,6 +25,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from sklearn.metrics import f1_score, classification_report
+from sklearn.preprocessing import StandardScaler
 
 from graphfraud.data.dataset import load_elliptic, to_pyg
 from graphfraud.data.resampling import compute_class_weights
@@ -97,6 +103,15 @@ def train_gnn(cfg: dict):
         val_timesteps=tuple(data_cfg.get("val_timesteps", [35, 42])),
         test_timesteps=tuple(data_cfg.get("test_timesteps", [43, 49])),
     )
+
+    # ── Feature standardization ─────────────────────────────────────
+    # Fit scaler on training nodes only, transform all nodes.
+    # 166 features span different scales; standardization improves GNN convergence.
+    scaler = StandardScaler()
+    train_features = dataset.node_features[dataset.train_mask]
+    scaler.fit(train_features)
+    dataset.node_features = scaler.transform(dataset.node_features).astype(np.float32)
+    logger.info("Feature standardization applied (fit on train, transform all)")
 
     pyg_data = to_pyg(dataset).to(device)
     logger.info(f"PyG Data: {pyg_data}")
@@ -264,3 +279,45 @@ def train_xgboost(cfg: dict):
     )
 
     return model, results
+
+
+def train_sklearn_baseline(cfg: dict):
+    """Train Logistic Regression or Random Forest baseline from config."""
+    from graphfraud.models.sklearn_baselines import (
+        train_logistic_regression,
+        train_random_forest,
+    )
+
+    model_type = cfg["model"]["type"]
+    data_dir = Path(cfg.get("data", {}).get("data_dir", "data/"))
+    dataset = load_elliptic(data_dir, temporal_split=True)
+
+    X_train = dataset.node_features[dataset.train_mask]
+    y_train = dataset.labels[dataset.train_mask]
+    X_val = dataset.node_features[dataset.val_mask]
+    y_val = dataset.labels[dataset.val_mask]
+
+    output_dir = Path(cfg.get("output", {}).get("dir", "trained_models/"))
+    params = cfg.get("model", {}).get("params", {})
+
+    if model_type == "logistic_regression":
+        save_path = output_dir / "logistic_regression.pkl"
+        model, results = train_logistic_regression(
+            X_train, y_train, X_val, y_val,
+            save_path=save_path,
+            **params,
+        )
+    elif model_type == "random_forest":
+        save_path = output_dir / "random_forest.pkl"
+        model, results = train_random_forest(
+            X_train, y_train, X_val, y_val,
+            save_path=save_path,
+            **params,
+        )
+    else:
+        raise ValueError(f"Unknown sklearn baseline: {model_type}")
+
+    return model, results
+
+# GraphFraud v0.1.0
+# Any usage is subject to this software's license.

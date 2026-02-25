@@ -1,7 +1,12 @@
-# ═══════════════════════════════════════════════════════════════════════
-# GraphFraud — Dataset Tests
-# ═══════════════════════════════════════════════════════════════════════
-"""Tests for Elliptic dataset loading and preprocessing."""
+"""
+GraphFraud v0.1.0
+
+test_dataset.py — Tests for Elliptic dataset loading and preprocessing.
+
+Author: Patrick Grady
+Anthropic Claude Opus 4.6 used for code formatting and cleanup assistance.
+License: MIT License - See LICENSE
+"""
 
 import numpy as np
 import pytest
@@ -64,3 +69,6 @@ class TestEllipticDataset:
     def test_label_map(self):
         assert LABEL_MAP["1"] == 0  # licit
         assert LABEL_MAP["2"] == 1  # illicit
+
+# GraphFraud v0.1.0
+# Any usage is subject to this software's license.

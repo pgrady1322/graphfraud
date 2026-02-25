@@ -1,48 +1,18 @@
 # ═══════════════════════════════════════════════════════════════════════
-# GraphFraud — .gitignore
+# GraphFraud — Random Forest Baseline Configuration
 # ═══════════════════════════════════════════════════════════════════════
 
-# Data (download via CLI)
-data/*
-!data/.gitkeep
+model:
+  type: random_forest
+  params:
+    n_estimators: 300
+    max_depth: 12
+    min_samples_leaf: 5
+    resample: true
+    max_majority: 30000
 
-# Trained models
-trained_models/*
-!trained_models/.gitkeep
-*.pkl
-*.pt
+data:
+  data_dir: data/
 
-# Results
-results/*
-!results/.gitkeep
-
-# Python
-__pycache__/
-*.py[cod]
-*.egg-info/
-dist/
-build/
-*.egg
-
-# Environments
-.env
-.venv
-env/
-venv/
-
-# IDE
-.idea/
-.vscode/
-*.swp
-*.swo
-*~
-
-# OS
-.DS_Store
-Thumbs.db
-
-# Jupyter
-.ipynb_checkpoints/
-
-# MLOps
-mlruns/
+output:
+  dir: trained_models/

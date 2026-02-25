@@ -1,11 +1,14 @@
-# ═══════════════════════════════════════════════════════════════════════
-# GraphFraud — Model Evaluation
-# ═══════════════════════════════════════════════════════════════════════
 """
-Evaluation metrics and reporting for fraud detection models.
+GraphFraud v0.1.0
+
+evaluation.py — Model evaluation metrics and reporting.
 
 Emphasizes precision-recall tradeoffs and F1 on the minority (illicit) class,
 since accuracy is misleading with ~9:1 class imbalance.
+
+Author: Patrick Grady
+Anthropic Claude Opus 4.6 used for code formatting and cleanup assistance.
+License: MIT License - See LICENSE
 """
 
 import json
@@ -141,6 +144,7 @@ def evaluate_model(model_path: str, data_dir: str, output_dir: str = "results/")
         Results dict
     """
     import torch
+    from graphfraud.data.dataset import load_elliptic, to_pyg
 
     output_dir = Path(output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -201,6 +205,5 @@ def evaluate_model(model_path: str, data_dir: str, output_dir: str = "results/")
 
     return results
 
-
-# Import here to avoid circular
-from graphfraud.data.dataset import load_elliptic, to_pyg
+# GraphFraud v0.1.0
+# Any usage is subject to this software's license.

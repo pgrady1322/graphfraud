@@ -1,7 +1,12 @@
-# ═══════════════════════════════════════════════════════════════════════
-# GraphFraud — Resampling Tests
-# ═══════════════════════════════════════════════════════════════════════
-"""Tests for hybrid resampling and class weight computation."""
+"""
+GraphFraud v0.1.0
+
+test_resampling.py — Tests for hybrid resampling and class weight computation.
+
+Author: Patrick Grady
+Anthropic Claude Opus 4.6 used for code formatting and cleanup assistance.
+License: MIT License - See LICENSE
+"""
 
 import numpy as np
 import pytest
@@ -81,3 +86,6 @@ class TestFocalLossWeights:
         weights = focal_loss_weights(y, gamma=0.0)
         # gamma=0 → all weights = (1-0.5)^0 = 1.0
         np.testing.assert_array_almost_equal(weights, 1.0)
+
+# GraphFraud v0.1.0
+# Any usage is subject to this software's license.

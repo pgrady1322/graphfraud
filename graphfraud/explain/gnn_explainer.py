@@ -1,13 +1,16 @@
-# ═══════════════════════════════════════════════════════════════════════
-# GraphFraud — GNNExplainer for Transaction-Level Attribution
-# ═══════════════════════════════════════════════════════════════════════
 """
-GNNExplainer wrapper for understanding individual fraud predictions.
+GraphFraud v0.1.0
+
+gnn_explainer.py — GNNExplainer for transaction-level attribution.
 
 Answers: "Why did the model flag this transaction as illicit?"
 - Which input features were most important?
 - Which neighboring transactions influenced the decision?
 - What subgraph structure triggered the classification?
+
+Author: Patrick Grady
+Anthropic Claude Opus 4.6 used for code formatting and cleanup assistance.
+License: MIT License - See LICENSE
 """
 
 import logging
@@ -136,3 +139,6 @@ def explain_node(
     logger.info(f"  Key neighbors: {[n['neighbor_id'] for n in key_neighbors]}")
 
     return result
+
+# GraphFraud v0.1.0
+# Any usage is subject to this software's license.

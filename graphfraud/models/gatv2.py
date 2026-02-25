@@ -1,14 +1,17 @@
-# ═══════════════════════════════════════════════════════════════════════
-# GraphFraud — GATv2Conv Fraud Classifier
-# ═══════════════════════════════════════════════════════════════════════
 """
-Graph Attention Network v2 (GATv2Conv) for node-level fraud classification.
+GraphFraud v0.1.0
+
+gatv2.py — GATv2Conv graph attention fraud classifier.
 
 Architecture mirrors the GATv2 pattern used in strandweaver's PathGNN
 for assembly graph path resolution, adapted for transaction graphs.
 
 Reference:
     Brody, Alon, Yahav. "How Attentive are Graph Attention Networks?" (ICLR 2022)
+
+Author: Patrick Grady
+Anthropic Claude Opus 4.6 used for code formatting and cleanup assistance.
+License: MIT License - See LICENSE
 """
 
 import torch
@@ -129,3 +132,6 @@ class GATv2FraudClassifier(nn.Module):
         with torch.no_grad():
             logits = self.forward(x, edge_index)
             return F.softmax(logits, dim=-1)
+
+# GraphFraud v0.1.0
+# Any usage is subject to this software's license.

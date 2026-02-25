@@ -1,7 +1,12 @@
-# ═══════════════════════════════════════════════════════════════════════
-# GraphFraud CLI
-# ═══════════════════════════════════════════════════════════════════════
-"""Click-based command-line interface for GraphFraud."""
+"""
+GraphFraud v0.1.0
+
+cli.py — Click-based command-line interface for GraphFraud.
+
+Author: Patrick Grady
+Anthropic Claude Opus 4.6 used for code formatting and cleanup assistance.
+License: MIT License - See LICENSE
+"""
 
 import click
 import yaml
@@ -53,6 +58,10 @@ def train(config):
         from graphfraud.training.trainer import train_xgboost
 
         train_xgboost(cfg)
+    elif model_type in ("logistic_regression", "random_forest"):
+        from graphfraud.training.trainer import train_sklearn_baseline
+
+        train_sklearn_baseline(cfg)
     else:
         raise click.BadParameter(f"Unknown model type: {model_type}")
 
@@ -66,7 +75,9 @@ def evaluate(model, data, output):
     from graphfraud.training.evaluation import evaluate_model
 
     results = evaluate_model(model_path=model, data_dir=data, output_dir=output)
-    click.echo(f"✓ Evaluation complete — F1={results['f1']:.4f}, AUC={results['auc_roc']:.4f}")
+    f1 = results.get('f1_illicit', 0.0)
+    auc = results.get('auc_roc', 0.0)
+    click.echo(f"✓ Evaluation complete — F1={f1:.4f}, AUC-ROC={auc:.4f}")
 
 
 @main.command()
@@ -85,3 +96,6 @@ def explain(model, node_id, data):
 
 if __name__ == "__main__":
     main()
+
+# GraphFraud v0.1.0
+# Any usage is subject to this software's license.

@@ -62,6 +62,9 @@ Repository = "https://github.com/pgrady1322/graphfraud"
 # Tool Configuration
 # ═══════════════════════════════════════════════════════════════════════
 
+[tool.setuptools.packages.find]
+include = ["graphfraud*"]
+
 [tool.ruff]
 line-length = 100
 target-version = "py310"

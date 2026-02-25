@@ -1,8 +1,7 @@
-# ═══════════════════════════════════════════════════════════════════════
-# GraphFraud — GraphSAGE Fraud Classifier
-# ═══════════════════════════════════════════════════════════════════════
 """
-GraphSAGE for node-level fraud classification.
+GraphFraud v0.1.0
+
+graphsage.py — GraphSAGE inductive fraud classifier.
 
 Inductive model that samples and aggregates neighbor features.
 Good baseline — faster than GATv2 but doesn't learn attention weights.
@@ -10,6 +9,10 @@ Good baseline — faster than GATv2 but doesn't learn attention weights.
 Reference:
     Hamilton, Ying, Leskovec. "Inductive Representation Learning on
     Large Graphs" (NeurIPS 2017)
+
+Author: Patrick Grady
+Anthropic Claude Opus 4.6 used for code formatting and cleanup assistance.
+License: MIT License - See LICENSE
 """
 
 import torch
@@ -64,3 +67,6 @@ class GraphSAGEFraudClassifier(nn.Module):
             x = F.dropout(x, p=self.dropout, training=self.training)
 
         return self.mlp(x)
+
+# GraphFraud v0.1.0
+# Any usage is subject to this software's license.
