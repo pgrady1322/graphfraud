@@ -1,0 +1,18 @@
+# ═══════════════════════════════════════════════════════════════════════
+# GraphFraud — XGBoost Baseline Configuration (No Graph Structure)
+# ═══════════════════════════════════════════════════════════════════════
+
+model:
+  type: xgboost
+  params:
+    n_estimators: 500
+    max_depth: 8
+    learning_rate: 0.05
+    resample: true
+    max_majority: 30000
+
+data:
+  data_dir: data/
+
+output:
+  dir: trained_models/

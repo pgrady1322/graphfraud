@@ -1,0 +1,45 @@
+# ═══════════════════════════════════════════════════════════════════════
+# GraphFraud — .gitignore
+# ═══════════════════════════════════════════════════════════════════════
+
+# Data (download via CLI)
+data/
+
+# Trained models
+trained_models/
+*.pkl
+*.pt
+
+# Results
+results/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Environments
+.env
+.venv
+env/
+venv/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Jupyter
+.ipynb_checkpoints/
+
+# MLOps
+mlruns/
