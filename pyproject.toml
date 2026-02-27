@@ -43,8 +43,6 @@ classifiers = [
 gnn = [
     "torch>=2.0",
     "torch-geometric>=2.4",
-    "torch-scatter",
-    "torch-sparse",
 ]
 optuna = ["optuna>=3.0"]
 mlops = ["mlflow>=2.0", "dvc>=3.0"]

@@ -27,6 +27,7 @@ build/
 # Environments
 .env
 .venv
+.venv-1
 env/
 venv/
 
