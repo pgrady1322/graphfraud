@@ -8,10 +8,11 @@ Anthropic Claude Opus 4.6 used for code formatting and cleanup assistance.
 License: MIT License - See LICENSE
 """
 
-import click
-import yaml
 import logging
 from pathlib import Path
+
+import click
+import yaml
 
 logging.basicConfig(
     level=logging.INFO,
@@ -75,8 +76,8 @@ def evaluate(model, data, output):
     from graphfraud.training.evaluation import evaluate_model
 
     results = evaluate_model(model_path=model, data_dir=data, output_dir=output)
-    f1 = results.get('f1_illicit', 0.0)
-    auc = results.get('auc_roc', 0.0)
+    f1 = results.get("f1_illicit", 0.0)
+    auc = results.get("auc_roc", 0.0)
     click.echo(f"✓ Evaluation complete — F1={f1:.4f}, AUC-ROC={auc:.4f}")
 
 

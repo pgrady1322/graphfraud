@@ -10,10 +10,8 @@ License: MIT License - See LICENSE
 
 import numpy as np
 import pytest
-from unittest.mock import patch, MagicMock
-from pathlib import Path
 
-from graphfraud.data.dataset import EllipticDataset, LABEL_MAP
+from graphfraud.data.dataset import LABEL_MAP, EllipticDataset
 
 
 class TestEllipticDataset:
@@ -69,6 +67,7 @@ class TestEllipticDataset:
     def test_label_map(self):
         assert LABEL_MAP["1"] == 0  # licit
         assert LABEL_MAP["2"] == 1  # illicit
+
 
 # GraphFraud v0.1.0
 # Any usage is subject to this software's license.

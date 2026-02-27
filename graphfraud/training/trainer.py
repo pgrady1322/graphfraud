@@ -18,13 +18,12 @@ import json
 import logging
 import time
 from pathlib import Path
-from typing import Optional
 
 import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from sklearn.metrics import f1_score, classification_report
+from sklearn.metrics import classification_report, f1_score
 from sklearn.preprocessing import StandardScaler
 
 from graphfraud.data.dataset import load_elliptic, to_pyg
@@ -43,7 +42,7 @@ class FocalLoss(nn.Module):
     focuses learning on hard-to-classify minority cases.
     """
 
-    def __init__(self, alpha: Optional[torch.Tensor] = None, gamma: float = 2.0):
+    def __init__(self, alpha: torch.Tensor | None = None, gamma: float = 2.0):
         super().__init__()
         self.alpha = alpha
         self.gamma = gamma
@@ -71,12 +70,15 @@ def build_model(cfg: dict, num_features: int = 166):
 
     if model_type == "gatv2":
         from graphfraud.models.gatv2 import GATv2FraudClassifier
+
         return GATv2FraudClassifier(in_channels=num_features, **params)
     elif model_type == "graphsage":
         from graphfraud.models.graphsage import GraphSAGEFraudClassifier
+
         return GraphSAGEFraudClassifier(in_channels=num_features, **params)
     elif model_type == "gcn":
         from graphfraud.models.gcn import GCNFraudClassifier
+
         return GCNFraudClassifier(in_channels=num_features, **params)
     else:
         raise ValueError(f"Unknown model type: {model_type}")
@@ -201,12 +203,15 @@ def train_gnn(cfg: dict):
 
             # Save best model
             model_path = output_dir / f"{cfg['model']['type']}_best.pt"
-            torch.save({
-                "model_state_dict": model.state_dict(),
-                "config": cfg,
-                "epoch": epoch,
-                "val_f1": val_f1,
-            }, model_path)
+            torch.save(
+                {
+                    "model_state_dict": model.state_dict(),
+                    "config": cfg,
+                    "epoch": epoch,
+                    "val_f1": val_f1,
+                },
+                model_path,
+            )
         else:
             no_improve += 1
             if no_improve >= patience:
@@ -231,7 +236,9 @@ def train_gnn(cfg: dict):
         test_true = test_y.cpu().numpy()
         test_f1 = f1_score(test_true, test_pred, average="binary", pos_label=1)
 
-    report = classification_report(test_true, test_pred, target_names=["licit", "illicit"], digits=3)
+    report = classification_report(
+        test_true, test_pred, target_names=["licit", "illicit"], digits=3
+    )
     logger.info(f"\nTest F1 (illicit): {test_f1:.4f}")
     logger.info(f"\n{report}")
 
@@ -273,7 +280,10 @@ def train_xgboost(cfg: dict):
     xgb_cfg = cfg.get("model", {}).get("params", {})
 
     model, results = train_xgboost_baseline(
-        X_train, y_train, X_val, y_val,
+        X_train,
+        y_train,
+        X_val,
+        y_val,
         save_path=save_path,
         **xgb_cfg,
     )
@@ -303,14 +313,20 @@ def train_sklearn_baseline(cfg: dict):
     if model_type == "logistic_regression":
         save_path = output_dir / "logistic_regression.pkl"
         model, results = train_logistic_regression(
-            X_train, y_train, X_val, y_val,
+            X_train,
+            y_train,
+            X_val,
+            y_val,
             save_path=save_path,
             **params,
         )
     elif model_type == "random_forest":
         save_path = output_dir / "random_forest.pkl"
         model, results = train_random_forest(
-            X_train, y_train, X_val, y_val,
+            X_train,
+            y_train,
+            X_val,
+            y_val,
             save_path=save_path,
             **params,
         )
@@ -318,6 +334,7 @@ def train_sklearn_baseline(cfg: dict):
         raise ValueError(f"Unknown sklearn baseline: {model_type}")
 
     return model, results
+
 
 # GraphFraud v0.1.0
 # Any usage is subject to this software's license.

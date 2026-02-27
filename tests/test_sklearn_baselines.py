@@ -35,9 +35,7 @@ class TestLogisticRegression:
         from graphfraud.models.sklearn_baselines import train_logistic_regression
 
         X_train, y_train, X_val, y_val = synthetic_data
-        model, results = train_logistic_regression(
-            X_train, y_train, X_val, y_val, resample=False
-        )
+        model, results = train_logistic_regression(X_train, y_train, X_val, y_val, resample=False)
         assert hasattr(model, "predict")
         assert hasattr(model, "predict_proba")
         assert "f1_illicit" in results
@@ -48,9 +46,7 @@ class TestLogisticRegression:
         from graphfraud.models.sklearn_baselines import train_logistic_regression
 
         X_train, y_train, X_val, y_val = synthetic_data
-        model, _ = train_logistic_regression(
-            X_train, y_train, X_val, y_val, resample=False
-        )
+        model, _ = train_logistic_regression(X_train, y_train, X_val, y_val, resample=False)
         preds = model.predict(X_val)
         probs = model.predict_proba(X_val)
         assert preds.shape == (50,)
@@ -69,9 +65,7 @@ class TestLogisticRegression:
         from graphfraud.models.sklearn_baselines import train_logistic_regression
 
         save_path = tmp_path / "lr_model.pkl"
-        model, _ = train_logistic_regression(
-            *synthetic_data, resample=False, save_path=save_path
-        )
+        model, _ = train_logistic_regression(*synthetic_data, resample=False, save_path=save_path)
         assert save_path.exists()
 
 
@@ -105,8 +99,7 @@ class TestRandomForest:
 
         X_train, y_train, X_val, y_val = synthetic_data
         model, results = train_random_forest(
-            X_train, y_train, X_val, y_val, resample=True,
-            max_majority=100, n_estimators=10
+            X_train, y_train, X_val, y_val, resample=True, max_majority=100, n_estimators=10
         )
         assert results["f1_illicit"] >= 0.0
 
@@ -129,6 +122,7 @@ class TestRandomForest:
             *synthetic_data, resample=False, n_estimators=10, save_path=save_path
         )
         assert save_path.exists()
+
 
 # GraphFraud v0.1.0
 # Any usage is subject to this software's license.

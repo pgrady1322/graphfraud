@@ -22,7 +22,6 @@ License: MIT License - See LICENSE
 import logging
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Optional
 
 import numpy as np
 import pandas as pd
@@ -74,7 +73,7 @@ class EllipticDataset:
     def class_counts(self) -> dict:
         labeled = self.labels[self.labels >= 0]
         unique, counts = np.unique(labeled, return_counts=True)
-        return {int(u): int(c) for u, c in zip(unique, counts)}
+        return {int(u): int(c) for u, c in zip(unique, counts, strict=True)}
 
     @property
     def imbalance_ratio(self) -> float:
@@ -85,7 +84,7 @@ class EllipticDataset:
 
     def summary(self) -> str:
         lines = [
-            f"Elliptic Bitcoin Dataset",
+            "Elliptic Bitcoin Dataset",
             f"  Nodes:      {self.num_nodes:,}",
             f"  Edges:      {self.num_edges:,}",
             f"  Features:   {self.num_features}",
@@ -95,7 +94,9 @@ class EllipticDataset:
             f"  Timesteps:  {int(self.timesteps.min())}-{int(self.timesteps.max())}",
         ]
         if self.train_mask.sum() > 0:
-            lines.append(f"  Train/Val/Test: {self.train_mask.sum()}/{self.val_mask.sum()}/{self.test_mask.sum()}")
+            lines.append(
+                f"  Train/Val/Test: {self.train_mask.sum()}/{self.val_mask.sum()}/{self.test_mask.sum()}"
+            )
         return "\n".join(lines)
 
 
@@ -127,9 +128,13 @@ def download_elliptic(output_dir: Path) -> Path:
     try:
         subprocess.run(
             [
-                "kaggle", "datasets", "download",
-                "-d", "ellipticco/elliptic-data-set",
-                "-p", str(output_dir),
+                "kaggle",
+                "datasets",
+                "download",
+                "-d",
+                "ellipticco/elliptic-data-set",
+                "-p",
+                str(output_dir),
                 "--unzip",
             ],
             check=True,
@@ -235,9 +240,13 @@ def load_elliptic(
     labeled_mask = labels >= 0
 
     if temporal_split:
-        train_mask = labeled_mask & (timesteps >= train_timesteps[0]) & (timesteps <= train_timesteps[1])
+        train_mask = (
+            labeled_mask & (timesteps >= train_timesteps[0]) & (timesteps <= train_timesteps[1])
+        )
         val_mask = labeled_mask & (timesteps >= val_timesteps[0]) & (timesteps <= val_timesteps[1])
-        test_mask = labeled_mask & (timesteps >= test_timesteps[0]) & (timesteps <= test_timesteps[1])
+        test_mask = (
+            labeled_mask & (timesteps >= test_timesteps[0]) & (timesteps <= test_timesteps[1])
+        )
 
         logger.info(
             f"  Temporal split: train={train_mask.sum():,} "
@@ -280,7 +289,7 @@ def to_pyg(dataset: EllipticDataset):
     except ImportError:
         raise ImportError(
             "PyTorch Geometric required. Install with: pip install -e '.[gnn]'"
-        )
+        ) from None
 
     data = Data(
         x=torch.from_numpy(dataset.node_features),
@@ -296,6 +305,7 @@ def to_pyg(dataset: EllipticDataset):
     data.node_ids = dataset.node_ids
 
     return data
+
 
 # GraphFraud v0.1.0
 # Any usage is subject to this software's license.

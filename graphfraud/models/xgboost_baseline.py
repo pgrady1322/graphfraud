@@ -17,7 +17,6 @@ License: MIT License - See LICENSE
 import logging
 import pickle
 from pathlib import Path
-from typing import Optional
 
 import numpy as np
 import xgboost as xgb
@@ -40,7 +39,7 @@ def train_xgboost_baseline(
     max_depth: int = 8,
     learning_rate: float = 0.05,
     random_state: int = 42,
-    save_path: Optional[Path] = None,
+    save_path: Path | None = None,
 ) -> tuple[xgb.XGBClassifier, dict]:
     """
     Train an XGBoost baseline (no graph structure).
@@ -78,11 +77,14 @@ def train_xgboost_baseline(
         "random_state": random_state,
     }
 
-    logger.info(f"Training XGBoost baseline: {X_train.shape[0]:,} samples, {X_train.shape[1]} features")
+    logger.info(
+        f"Training XGBoost baseline: {X_train.shape[0]:,} samples, {X_train.shape[1]} features"
+    )
 
     model = xgb.XGBClassifier(**params)
     model.fit(
-        X_train, y_train,
+        X_train,
+        y_train,
         eval_set=[(X_val, y_val)],
         verbose=False,
     )
@@ -111,6 +113,7 @@ def train_xgboost_baseline(
         logger.info(f"✓ Saved: {save_path}")
 
     return model, results
+
 
 # GraphFraud v0.1.0
 # Any usage is subject to this software's license.

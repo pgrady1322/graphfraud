@@ -11,14 +11,13 @@ Anthropic Claude Opus 4.6 used for code formatting and cleanup assistance.
 License: MIT License - See LICENSE
 """
 
-import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
 try:
     from torch_geometric.nn import GCNConv
 except ImportError:
-    raise ImportError("PyTorch Geometric required. Install with: pip install -e '.[gnn]'")
+    raise ImportError("PyTorch Geometric required. Install with: pip install -e '.[gnn]'") from None
 
 
 class GCNFraudClassifier(nn.Module):
@@ -55,6 +54,7 @@ class GCNFraudClassifier(nn.Module):
             x = F.dropout(x, p=self.dropout, training=self.training)
 
         return self.mlp(x)
+
 
 # GraphFraud v0.1.0
 # Any usage is subject to this software's license.

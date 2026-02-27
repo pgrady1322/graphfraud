@@ -19,9 +19,9 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 try:
-    from torch_geometric.nn import GATv2Conv, global_mean_pool
+    from torch_geometric.nn import GATv2Conv, global_mean_pool  # noqa: F401
 except ImportError:
-    raise ImportError("PyTorch Geometric required. Install with: pip install -e '.[gnn]'")
+    raise ImportError("PyTorch Geometric required. Install with: pip install -e '.[gnn]'") from None
 
 
 class GATv2FraudClassifier(nn.Module):
@@ -66,8 +66,11 @@ class GATv2FraudClassifier(nn.Module):
         for _ in range(num_layers - 2):
             self.convs.append(
                 GATv2Conv(
-                    hidden_channels * heads, hidden_channels, heads=heads,
-                    dropout=dropout, concat=True,
+                    hidden_channels * heads,
+                    hidden_channels,
+                    heads=heads,
+                    dropout=dropout,
+                    concat=True,
                 )
             )
             self.norms.append(nn.BatchNorm1d(hidden_channels * heads))
@@ -75,8 +78,11 @@ class GATv2FraudClassifier(nn.Module):
         # Final GATv2 layer: → hidden_channels (single head, no concat)
         self.convs.append(
             GATv2Conv(
-                hidden_channels * heads, hidden_channels, heads=1,
-                dropout=dropout, concat=False,
+                hidden_channels * heads,
+                hidden_channels,
+                heads=1,
+                dropout=dropout,
+                concat=False,
             )
         )
         self.norms.append(nn.BatchNorm1d(hidden_channels))
@@ -104,7 +110,7 @@ class GATv2FraudClassifier(nn.Module):
         """
         attention_weights = None
 
-        for i, (conv, norm) in enumerate(zip(self.convs, self.norms)):
+        for i, (conv, norm) in enumerate(zip(self.convs, self.norms, strict=True)):
             if i < self.num_layers - 1:
                 x = conv(x, edge_index)
                 x = norm(x)
@@ -132,6 +138,7 @@ class GATv2FraudClassifier(nn.Module):
         with torch.no_grad():
             logits = self.forward(x, edge_index)
             return F.softmax(logits, dim=-1)
+
 
 # GraphFraud v0.1.0
 # Any usage is subject to this software's license.

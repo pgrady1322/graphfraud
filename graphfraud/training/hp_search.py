@@ -12,9 +12,7 @@ License: MIT License - See LICENSE
 """
 
 import logging
-from typing import Optional
 
-import numpy as np
 import torch
 from sklearn.metrics import f1_score
 
@@ -22,6 +20,7 @@ logger = logging.getLogger("graphfraud")
 
 try:
     import optuna
+
     optuna.logging.set_verbosity(optuna.logging.WARNING)
     HAS_OPTUNA = True
 except ImportError:
@@ -54,17 +53,17 @@ def gnn_objective(trial, pyg_data, model_type: str = "gatv2", device=None):
         },
     }
 
-    from graphfraud.training.trainer import build_model, FocalLoss
     from graphfraud.data.resampling import compute_class_weights
+    from graphfraud.training.trainer import FocalLoss, build_model
 
     model = build_model(cfg, num_features=pyg_data.x.shape[1]).to(device)
 
     # Compute class weights
     train_labels = pyg_data.y[pyg_data.train_mask].cpu().numpy()
     weights = compute_class_weights(train_labels)
-    weight_tensor = torch.tensor(
-        [weights.get(i, 1.0) for i in range(2)], dtype=torch.float32
-    ).to(device)
+    weight_tensor = torch.tensor([weights.get(i, 1.0) for i in range(2)], dtype=torch.float32).to(
+        device
+    )
 
     criterion = FocalLoss(alpha=weight_tensor, gamma=focal_gamma)
     optimizer = torch.optim.Adam(model.parameters(), lr=lr, weight_decay=weight_decay)
@@ -133,8 +132,10 @@ def run_hp_search(
     model_type: str,
     n_trials: int = 50,
     pyg_data=None,
-    X_train=None, y_train=None,
-    X_val=None, y_val=None,
+    X_train=None,
+    y_train=None,
+    X_val=None,
+    y_val=None,
     device=None,
 ) -> dict:
     """
@@ -177,6 +178,7 @@ def run_hp_search(
     logger.info(f"Best params: {study.best_params}")
 
     return study.best_params
+
 
 # GraphFraud v0.1.0
 # Any usage is subject to this software's license.

@@ -14,7 +14,6 @@ License: MIT License - See LICENSE
 import logging
 import pickle
 from pathlib import Path
-from typing import Optional
 
 import numpy as np
 from sklearn.ensemble import RandomForestClassifier
@@ -37,7 +36,7 @@ def train_logistic_regression(
     C: float = 1.0,
     max_iter: int = 1000,
     random_state: int = 42,
-    save_path: Optional[Path] = None,
+    save_path: Path | None = None,
 ) -> tuple[LogisticRegression, dict]:
     """
     Train L2-regularized Logistic Regression baseline.
@@ -80,7 +79,7 @@ def train_logistic_regression(
 
     # Evaluate
     y_pred = model.predict(X_val_scaled)
-    y_prob = model.predict_proba(X_val_scaled)[:, 1]
+    _y_prob = model.predict_proba(X_val_scaled)[:, 1]
     f1 = f1_score(y_val, y_pred, average="binary", pos_label=1)
     report = classification_report(y_val, y_pred, target_names=["licit", "illicit"], digits=3)
 
@@ -117,7 +116,7 @@ def train_random_forest(
     min_samples_leaf: int = 5,
     random_state: int = 42,
     n_jobs: int = -1,
-    save_path: Optional[Path] = None,
+    save_path: Path | None = None,
 ) -> tuple[RandomForestClassifier, dict]:
     """
     Train Random Forest baseline.
@@ -157,7 +156,7 @@ def train_random_forest(
 
     # Evaluate
     y_pred = model.predict(X_val)
-    y_prob = model.predict_proba(X_val)[:, 1]
+    _y_prob = model.predict_proba(X_val)[:, 1]
     f1 = f1_score(y_val, y_pred, average="binary", pos_label=1)
     report = classification_report(y_val, y_pred, target_names=["licit", "illicit"], digits=3)
 
@@ -184,6 +183,7 @@ def train_random_forest(
         logger.info(f"✓ Saved: {save_path}")
 
     return model, results
+
 
 # GraphFraud v0.1.0
 # Any usage is subject to this software's license.

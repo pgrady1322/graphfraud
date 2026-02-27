@@ -15,14 +15,13 @@ Anthropic Claude Opus 4.6 used for code formatting and cleanup assistance.
 License: MIT License - See LICENSE
 """
 
-import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
 try:
     from torch_geometric.nn import SAGEConv
 except ImportError:
-    raise ImportError("PyTorch Geometric required. Install with: pip install -e '.[gnn]'")
+    raise ImportError("PyTorch Geometric required. Install with: pip install -e '.[gnn]'") from None
 
 
 class GraphSAGEFraudClassifier(nn.Module):
@@ -60,13 +59,14 @@ class GraphSAGEFraudClassifier(nn.Module):
         )
 
     def forward(self, x, edge_index):
-        for conv, norm in zip(self.convs, self.norms):
+        for conv, norm in zip(self.convs, self.norms, strict=True):
             x = conv(x, edge_index)
             x = norm(x)
             x = F.relu(x)
             x = F.dropout(x, p=self.dropout, training=self.training)
 
         return self.mlp(x)
+
 
 # GraphFraud v0.1.0
 # Any usage is subject to this software's license.

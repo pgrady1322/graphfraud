@@ -15,7 +15,6 @@ License: MIT License - See LICENSE
 
 import logging
 from pathlib import Path
-from typing import Optional
 
 import numpy as np
 import torch
@@ -47,9 +46,8 @@ def explain_node(
         from torch_geometric.explain import Explainer, GNNExplainer
     except ImportError:
         raise ImportError(
-            "PyTorch Geometric required for explanations. "
-            "Install with: pip install -e '.[gnn]'"
-        )
+            "PyTorch Geometric required for explanations. Install with: pip install -e '.[gnn]'"
+        ) from None
 
     from graphfraud.data.dataset import load_elliptic, to_pyg
     from graphfraud.training.trainer import build_model
@@ -109,15 +107,21 @@ def explain_node(
         node_edges = np.where((edge_src == node_id) | (edge_dst == node_id))[0]
 
         if len(node_edges) > 0:
-            important_edges = node_edges[np.argsort(edge_importance[node_edges])[-top_k_neighbors:][::-1]]
+            important_edges = node_edges[
+                np.argsort(edge_importance[node_edges])[-top_k_neighbors:][::-1]
+            ]
             key_neighbors = []
             for eidx in important_edges:
                 neighbor = int(edge_dst[eidx]) if edge_src[eidx] == node_id else int(edge_src[eidx])
-                key_neighbors.append({
-                    "neighbor_id": neighbor,
-                    "edge_importance": float(edge_importance[eidx]),
-                    "neighbor_label": int(pyg_data.y[neighbor].item()) if pyg_data.y[neighbor] >= 0 else "unknown",
-                })
+                key_neighbors.append(
+                    {
+                        "neighbor_id": neighbor,
+                        "edge_importance": float(edge_importance[eidx]),
+                        "neighbor_label": int(pyg_data.y[neighbor].item())
+                        if pyg_data.y[neighbor] >= 0
+                        else "unknown",
+                    }
+                )
         else:
             key_neighbors = []
     else:
@@ -139,6 +143,7 @@ def explain_node(
     logger.info(f"  Key neighbors: {[n['neighbor_id'] for n in key_neighbors]}")
 
     return result
+
 
 # GraphFraud v0.1.0
 # Any usage is subject to this software's license.

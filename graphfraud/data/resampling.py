@@ -12,7 +12,6 @@ License: MIT License - See LICENSE
 """
 
 import logging
-from typing import Optional
 
 import numpy as np
 from sklearn.utils import resample
@@ -24,7 +23,7 @@ def hybrid_resample(
     X: np.ndarray,
     y: np.ndarray,
     max_majority: int = 30_000,
-    min_minority: Optional[int] = None,
+    min_minority: int | None = None,
     random_state: int = 42,
 ) -> tuple[np.ndarray, np.ndarray]:
     """
@@ -49,7 +48,7 @@ def hybrid_resample(
         X_resampled, y_resampled
     """
     classes, counts = np.unique(y, return_counts=True)
-    class_counts = dict(zip(classes, counts))
+    class_counts = dict(zip(classes, counts, strict=True))
 
     logger.info(f"Original distribution: {class_counts}")
 
@@ -68,14 +67,16 @@ def hybrid_resample(
 
         if len(X_cls) > target:
             X_rs, y_rs = resample(
-                X_cls, y_cls,
+                X_cls,
+                y_cls,
                 n_samples=target,
                 random_state=random_state,
                 replace=False,
             )
         elif len(X_cls) < target:
             X_rs, y_rs = resample(
-                X_cls, y_cls,
+                X_cls,
+                y_cls,
                 n_samples=target,
                 random_state=random_state,
                 replace=True,
@@ -89,7 +90,7 @@ def hybrid_resample(
     X_out = np.vstack(X_parts)
     y_out = np.concatenate(y_parts)
 
-    new_counts = dict(zip(*np.unique(y_out, return_counts=True)))
+    new_counts = dict(zip(*np.unique(y_out, return_counts=True), strict=True))
     logger.info(f"Resampled distribution: {new_counts} (total: {len(y_out):,})")
 
     return X_out, y_out
@@ -108,7 +109,7 @@ def compute_class_weights(y: np.ndarray) -> dict:
     labeled = y[y >= 0]
     classes, counts = np.unique(labeled, return_counts=True)
     total = len(labeled)
-    weights = {int(c): total / (len(classes) * n) for c, n in zip(classes, counts)}
+    weights = {int(c): total / (len(classes) * n) for c, n in zip(classes, counts, strict=True)}
     logger.info(f"Class weights: {weights}")
     return weights
 
@@ -130,9 +131,10 @@ def focal_loss_weights(y: np.ndarray, gamma: float = 2.0) -> np.ndarray:
         Per-sample weights (N,)
     """
     classes, counts = np.unique(y, return_counts=True)
-    priors = dict(zip(classes, counts / len(y)))
+    priors = dict(zip(classes, counts / len(y), strict=True))
     weights = np.array([(1 - priors.get(label, 0.5)) ** gamma for label in y])
     return weights
+
 
 # GraphFraud v0.1.0
 # Any usage is subject to this software's license.

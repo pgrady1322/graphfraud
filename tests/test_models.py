@@ -8,7 +8,6 @@ Anthropic Claude Opus 4.6 used for code formatting and cleanup assistance.
 License: MIT License - See LICENSE
 """
 
-import numpy as np
 import pytest
 
 # GNN tests require PyTorch Geometric
@@ -75,6 +74,7 @@ class TestGCN:
         edge_index = torch.randint(0, 50, (2, 100))
         out = model(x, edge_index)
         assert out.shape == (50, 2)
+
 
 # GraphFraud v0.1.0
 # Any usage is subject to this software's license.

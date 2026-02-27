@@ -12,9 +12,9 @@ import numpy as np
 import pytest
 
 from graphfraud.data.resampling import (
-    hybrid_resample,
     compute_class_weights,
     focal_loss_weights,
+    hybrid_resample,
 )
 
 
@@ -86,6 +86,7 @@ class TestFocalLossWeights:
         weights = focal_loss_weights(y, gamma=0.0)
         # gamma=0 → all weights = (1-0.5)^0 = 1.0
         np.testing.assert_array_almost_equal(weights, 1.0)
+
 
 # GraphFraud v0.1.0
 # Any usage is subject to this software's license.

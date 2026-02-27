@@ -14,24 +14,25 @@ License: MIT License - See LICENSE
 import json
 import logging
 from pathlib import Path
-from typing import Optional
 
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
 from sklearn.metrics import (
+    average_precision_score,
     classification_report,
     confusion_matrix,
     f1_score,
     precision_recall_curve,
     roc_auc_score,
     roc_curve,
-    average_precision_score,
 )
 
 logger = logging.getLogger("graphfraud")
 
 
-def compute_metrics(y_true: np.ndarray, y_pred: np.ndarray, y_prob: Optional[np.ndarray] = None) -> dict:
+def compute_metrics(
+    y_true: np.ndarray, y_pred: np.ndarray, y_prob: np.ndarray | None = None
+) -> dict:
     """
     Compute comprehensive evaluation metrics.
 
@@ -63,8 +64,8 @@ def compute_metrics(y_true: np.ndarray, y_pred: np.ndarray, y_prob: Optional[np.
 def plot_evaluation(
     y_true: np.ndarray,
     y_pred: np.ndarray,
-    y_prob: Optional[np.ndarray] = None,
-    save_dir: Optional[Path] = None,
+    y_prob: np.ndarray | None = None,
+    save_dir: Path | None = None,
     model_name: str = "model",
 ):
     """
@@ -82,7 +83,7 @@ def plot_evaluation(
 
     # ── Confusion Matrix ────────────────────────────────────────────
     cm = confusion_matrix(y_true, y_pred)
-    im = axes[0].imshow(cm, interpolation="nearest", cmap="Blues")
+    axes[0].imshow(cm, interpolation="nearest", cmap="Blues")
     axes[0].set_title("Confusion Matrix")
     axes[0].set_xlabel("Predicted")
     axes[0].set_ylabel("True")
@@ -94,8 +95,15 @@ def plot_evaluation(
     # Annotate cells
     for i in range(2):
         for j in range(2):
-            axes[0].text(j, i, f"{cm[i, j]:,}", ha="center", va="center",
-                        fontsize=14, color="white" if cm[i, j] > cm.max() / 2 else "black")
+            axes[0].text(
+                j,
+                i,
+                f"{cm[i, j]:,}",
+                ha="center",
+                va="center",
+                fontsize=14,
+                color="white" if cm[i, j] > cm.max() / 2 else "black",
+            )
 
     if y_prob is not None:
         # ── ROC Curve ───────────────────────────────────────────────
@@ -144,6 +152,7 @@ def evaluate_model(model_path: str, data_dir: str, output_dir: str = "results/")
         Results dict
     """
     import torch
+
     from graphfraud.data.dataset import load_elliptic, to_pyg
 
     output_dir = Path(output_dir)
@@ -161,6 +170,7 @@ def evaluate_model(model_path: str, data_dir: str, output_dir: str = "results/")
         cfg = checkpoint["config"]
 
         from graphfraud.training.trainer import build_model
+
         model = build_model(cfg, num_features=dataset.num_features)
         model.load_state_dict(checkpoint["model_state_dict"])
         model.eval()
@@ -178,6 +188,7 @@ def evaluate_model(model_path: str, data_dir: str, output_dir: str = "results/")
     elif model_path.suffix == ".pkl":
         # XGBoost model
         import pickle
+
         with open(model_path, "rb") as f:
             model = pickle.load(f)
 
@@ -204,6 +215,7 @@ def evaluate_model(model_path: str, data_dir: str, output_dir: str = "results/")
     logger.info(f"✓ Results saved: {results_path}")
 
     return results
+
 
 # GraphFraud v0.1.0
 # Any usage is subject to this software's license.
