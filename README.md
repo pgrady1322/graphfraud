@@ -8,6 +8,8 @@ Detects illicit transactions in Bitcoin/financial networks using GATv2Conv graph
 
 ## Overview
 
+The inspiration for this project is the vast differences between the applications of machine learning models that explore tree / forest space versus graph models. Although these are both graph-based datasets, the node dimensions are low in a genome graph, and only by exploring the neighboring nodes via the sequence information on the edges can the optimal path be determined. The Elliptic Bitcoin dataset contains nodes that are extremely high dimensional, relatively, with 94 node features, as well as 72 aggregated neighbor features along with a 49 timestamp temporal dimension. Due to this, graph models (GAT2Conv) are much less likely to perform well relative to tree models (XGBoost). This is especially true since only ~23% of this dataset is labeled as licit or illicit transactions, and licit labels outweigh illicit 9:1.
+
 | Component | Description |
 |-----------|-------------|
 | **Graph Construction** | Build transaction graphs from tabular edge/node data (NetworkX → PyG) |
@@ -146,7 +148,7 @@ All 166 features are standardized (`StandardScaler`, fit on training nodes only)
 | XGBoost | 166 node features | No | 500 rounds, max_depth=8, hybrid resampled |
 | GCN | 166 + graph topology | Yes | 3 layers, 64 hidden |
 | GraphSAGE | 166 + sampled neighbors | Yes | 3 layers, 64 hidden |
-| **GATv2Conv** | 166 + attention-weighted neighbors | Yes | 3 layers, 8 heads, 32 dim |
+| GATv2Conv | 166 + attention-weighted neighbors | Yes | 3 layers, 8 heads, 32 dim |
 
 ## Key Design Decisions
 
@@ -154,6 +156,14 @@ All 166 features are standardized (`StandardScaler`, fit on training nodes only)
 2. **Semi-supervised** — use the 157k unlabeled nodes during message passing but only compute loss on labeled nodes
 3. **Inductive evaluation** — model must generalize to unseen timesteps
 4. **Attention interpretability** — GATv2 attention weights show *which* neighbor transactions influenced the classification
+
+## Results / Figures
+
+Full EDA, baseline training, and GNN training are in the [exploration notebook](notebooks/01_eda_and_baselines.ipynb).
+
+![Non-Graph Baselines](assets/nongraphbaselines_forgnnmodels.png)
+
+![Graph Model Accuracies](assets/graph_added_accuracies.png)
 
 ## License
 
