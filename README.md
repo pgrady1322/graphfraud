@@ -1,5 +1,9 @@
 # GraphFraud
 
+[![CI](https://github.com/pgrady1322/graphfraud/actions/workflows/ci.yml/badge.svg)](https://github.com/pgrady1322/graphfraud/actions/workflows/ci.yml)
+[![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
+[![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+
 **Graph Neural Network Fraud Detection on Financial Transaction Networks**
 
 Detects illicit transactions in Bitcoin/financial networks using GATv2Conv graph attention networks with class-imbalance-aware training. Inspired by graph attention networks build for genomics.
@@ -33,6 +37,15 @@ The inspiration for this project is the vast differences between the application
 > 166 node features (94 local + 72 aggregated neighbor features). Temporal graph with 49 timesteps.
 
 Download: [Kaggle](https://www.kaggle.com/datasets/ellipticco/elliptic-data-set)
+
+## Results / Figures
+
+Full EDA, baseline training, and GNN training are in the [exploration notebook](notebooks/01_eda_and_baselines.ipynb).
+
+![Non-Graph Baselines](assets/nongraphbaselines_forgnnmodels.png)
+
+![Graph Model Accuracies](assets/graph_added_accuracies.png)
+
 
 ## Quick Start
 
@@ -156,14 +169,6 @@ All 166 features are standardized (`StandardScaler`, fit on training nodes only)
 2. **Semi-supervised** — use the 157k unlabeled nodes during message passing but only compute loss on labeled nodes
 3. **Inductive evaluation** — model must generalize to unseen timesteps
 4. **Attention interpretability** — GATv2 attention weights show *which* neighbor transactions influenced the classification
-
-## Results / Figures
-
-Full EDA, baseline training, and GNN training are in the [exploration notebook](notebooks/01_eda_and_baselines.ipynb).
-
-![Non-Graph Baselines](assets/nongraphbaselines_forgnnmodels.png)
-
-![Graph Model Accuracies](assets/graph_added_accuracies.png)
 
 ## License
 
